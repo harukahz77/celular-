@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lima Celulares</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #25d366;
+      --dark: #1a1a1a;
+      --light: #f9f9f9;
+      --text: #333;
+      --border-radius: 10px;
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background-color: var(--dark);
+      color: white;
+      padding: 15px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 1.7rem;
+      text-align: center;
+    }
+
+    .banner {
+      background: url('https://images.unsplash.com/photo-1602116428821-5bb2f41b7e9d?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 600;
+      text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+
+    .banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    .banner > span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .secao {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .secao h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--dark);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out;
+    }
+
+    .secao.active h2 {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .produtos {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    .produtos::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .produtos::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+
+    .produto {
+      min-width: 150px; /* Tamanho reduzido */
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      padding: 15px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s forwards;
+    }
+
+    .produto:nth-child(1) { animation-delay: 0.2s; }
+    .produto:nth-child(2) { animation-delay: 0.4s; }
+    .produto:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .produto:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .produto img {
+      width: 100px; /* Tamanho reduzido da imagem */
+      border-radius: var(--border-radius);
+      transition: transform 0.3s ease;
+    }
+
+    .produto:hover img {
+      transform: scale(1.05);
+    }
+
+    .produto h3 {
+      font-size: 1em;
+      margin: 12px 0 6px;
+      color: var(--dark);
+    }
+
+    .produto p {
+      font-size: 0.9em;
+      margin: 6px 0;
+      color: #555;
+    }
+
+    .btn-especificacoes {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      background: var(--dark);
+      color: white;
+      padding: 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-especificacoes:hover {
+      background: #333;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8em;
+      padding: 30px 20px;
+      background: #f0f0f0;
+      color: #777;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal.show {
+      display: flex;
+      animation: zoomIn 0.4s forwards;
+    }
+
+    .modal.hide {
+      animation: zoomOut 0.4s forwards;
+    }
+
+    .modal-conteudo {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      transform: scale(0.8);
+      opacity: 0;
+    }
+
+    .modal.show .modal-conteudo {
+      animation: fadeInScale 0.4s forwards;
+    }
+
+    .modal-titulo {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+
+    .modal-lista {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 20px;
+    }
+
+    .modal-lista li {
+      margin-bottom: 8px;
+      color: #444;
+    }
+
+    .btn-fechar {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--dark);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-fechar:hover {
+      transform: rotate(90deg);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes zoomOut {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0.8); opacity: 0; }
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Lima Celulares</h1>
+  </header>
+
+  <div class="banner">
+    <span>Promoções Imperdíveis!</span>
+  </div>
+
+  <section class="secao" id="smartphones">
+    <h2>📱 Smartphones</h2>
+    <div class="produtos">
+      <div class="produto">
+        <img src="https://i.imgur.com/diaGgbO.jpeg" alt="Samsung Galaxy A14" />
+        <h3>Samsung Galaxy A14</h3>
+        <p>R$ 999,00</p>
+        <span class="btn-especificacoes" onclick="abrirEspecificacoes('a14')">Ver Especificações</span>
+      </div>
+
+      <div class="produto">
+        <img src="https://i.imgur.com/rFIeF4b.jpeg" alt="Xiaomi Redmi Note 13" />
+        <h3>Xiaomi Redmi Note 13</h3>
+        <p>R$ 1.199,00</p>
+        <span class="btn-especificacoes" onclick="abrirEspecificacoes('note13')">Ver Especificações</span>
+      </div>
+
+      <div class="produto">
+        <img src="https://i.imgur.com/aWHxL50.jpeg" alt="iPhone 16" />
+        <h3>iPhone 16</h3>
+        <p>R$ 1.999,00</p>
+        <span class="btn-especificacoes" onclick="abrirEspecificacoes('iphone16')">Ver Especificações</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal" id="modal-especificacoes">
+    <div class="modal-conteudo" id="modal-conteudo">
+      <button class="btn-fechar" onclick="fecharEspecificacoes()">×</button>
+      <h2 class="modal-titulo" id="modal-titulo">Especificações</h2>
+      <img id="modal-imagem" src="" alt="Imagem do aparelho" style="width: 100px; margin-bottom: 15px;"/>
+      <ul class="modal-lista" id="modal-lista"></ul>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Lima Celulares - Todos os direitos reservados.
+  </footer>
+
+  <script>
+    const especificacoes = {
+      a14: {
+        titulo: "Samsung Galaxy A14",
+        imagem: "https://i.imgur.com/diaGgbO.jpeg",
+        lista: [
+          "Tela: 6.6\" Full HD+ AMOLED",
+          "Processador: Exynos 1330",
+          "RAM: 6GB",
+          "Armazenamento: 128GB",
+          "Câmera traseira: 50MP + 5MP + 2MP",
+          "Câmera frontal: 13MP",
+          "Bateria: 5000mAh",
+          "Sistema: Android 13"
+        ]
+      },
+      note13: {
+        titulo: "Xiaomi Redmi Note 13",
+        imagem: "https://i.imgur.com/rFIeF4b.jpeg",
+        lista: [
+          "Tela: 6.67\" AMOLED FHD+",
+          "Processador: Snapdragon 7 Gen 3",
+          "RAM: 8GB",
+          "Armazenamento: 256GB",
+          "Câmera traseira: 108MP + 8MP + 2MP",
+          "Câmera frontal: 16MP",
+          "Bateria: 5500mAh",
+          "Sistema: MIUI 14"
+        ]
+      },
+      iphone16: {
+        titulo: "Apple iPhone 16",
+        imagem: "https://i.imgur.com/aWHxL50.jpeg",
+        lista: [
+          "Tela: 6.1\" Super Retina XDR OLED",
+          "Processador: A17 Bionic",
+          "RAM: 8GB",
+          "Armazenamento: 128GB / 256GB / 512GB",
+          "Câmera dupla: 48MP + 12MP",
+          "Câmera frontal: 12MP",
+          "Bateria: Até 20 horas de uso",
+          "Sistema: iOS 18"
+        ]
+      }
+    };
+
+    function abrirEspecificacoes(modelo) {
+      const dados = especificacoes[modelo];
+      const modal = document.getElementById("modal-especificacoes");
+      const titulo = document.getElementById("modal-titulo");
+      const lista = document.getElementById("modal-lista");
+      const imagem = document.getElementById("modal-imagem");
+
+      titulo.textContent = dados.titulo;
+      imagem.src = dados.imagem;
+      lista.innerHTML = "";
+      dados.lista.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        lista.appendChild(li);
+      });
+
+      modal.classList.remove("hide");
+      modal.classList.add("show");
+    }
+
+    function fecharEspecificacoes() {
+      const modal = document.getElementById("modal-especificacoes");
+      modal.classList.remove("show");
+      modal.classList.add("hide");
+    }
+  </script>
+</body>
+</html>
